@@ -99,13 +99,13 @@ const SignUp = () => {
         </div>
         <div className="flex flex-col gap-2 lg:flex-row">
           <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaGooglePlus className="bg-white rounded-full text-black text-2xl font-bold" />
+            <FaGooglePlus className="bg-white rounded-full text-pink-500 text-2xl font-bold" />
             <button className="uppercase text-white font-semibold text-[15px]">
               Continue with google
             </button>
           </div>
           <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaFacebook className="bg-white rounded-full text-black text-2xl font-bold" />
+            <FaFacebook className="bg-white rounded-full text-blue-500 text-2xl font-bold" />
             <button className="uppercase text-white font-semibold text-[15px]">
               Continue with facebook
             </button>
