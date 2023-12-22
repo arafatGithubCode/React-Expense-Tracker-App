@@ -3,39 +3,23 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import Oauth from "../../components/Oauth";
 
-const SignIn = () => {
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
+const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const auth = getAuth();
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        user.email,
-        user.password
-      );
-      if (userCredential.user) {
-        navigate("/expense-tracker");
-      }
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Email was sent!");
+      navigate("/sign-in");
     } catch (error) {
-      toast.error("Bad use credential");
+      toast.error("Could not send reset password!");
     }
   };
 
@@ -52,7 +36,7 @@ const SignIn = () => {
         className="w-[60%] sm:w-[50%] mx-auto mt-[2rem] bg-white bg-opacity-[0.4] shadow-lg rounded p-1"
       >
         <p className="mb-1 text-4xl font-semibold text-black text-center">
-          Sign In
+          Reset Password
         </p>
         <p className="mb-5 text-center">
           <span className="text-black font-lg">Do not have an account?</span>
@@ -73,38 +57,22 @@ const SignIn = () => {
             name="email"
             id="email"
             placeholder="example@gmail.com"
-            onChange={handleChange}
-            value={user.email}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
           />
         </div>
-        <div className="flex flex-col flex-1">
-          <label
-            className="font-semibold text-black cursor-pointer text-xl"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <input
-            className="bg-gray-500 p-2 border border-blue-500 focus:border-blue-800 rounded bg-opacity-[0.8] shadow hover:shadow-lg transition duration-200 ease-in-out text-white text-lg"
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
-            onChange={handleChange}
-            value={user.password}
-          />
-        </div>
-        <div className="flex my-2">
+        <div className="flex justify-end font-semibold gap-1">
+          <p>Have an account?</p>
           <Link
-            to="/forgot-password"
-            className="ml-auto text-blue-600 hover:text-blue-700 hover:font-semibold transition duration-150 ease-in-out"
+            to="/sign-in"
+            className="text-blue-600 hover:text-blue-700 hover:font-semibold transition duration-150 ease-in-out"
           >
-            Forgot password?
+            Sign In
           </Link>
         </div>
         <div className="bg-blue-500 flex  p-1 justify-center items-center my-2 text-white font-bold text-xl rounded hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-900 transition duration-200 ease-in-out">
           <button className="flex-1" type="submit">
-            Sign In
+            Send Reset Password
           </button>
         </div>
         <div className="flex items-center">
@@ -118,4 +86,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;
