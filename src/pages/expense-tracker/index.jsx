@@ -4,6 +4,7 @@ import { IoIosAddCircle } from "react-icons/io";
 
 import TransactionModal from "../../components/TransactionModal";
 import Summary from "../../components/Summary";
+import TransactionList from "../../components/TransactionList";
 
 const ExpenseTracker = () => {
   const [showModal, setShowModal] = useState(false);
@@ -37,6 +38,7 @@ const ExpenseTracker = () => {
         </div>
       </div>
       <Summary />
+      <TransactionList />
       <TransactionModal visible={showModal} onClose={handleClose} />
     </section>
   );

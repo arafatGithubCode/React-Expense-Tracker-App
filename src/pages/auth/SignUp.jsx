@@ -1,21 +1,59 @@
 import { useState } from "react";
 
-import { FaGooglePlus } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { db } from "../../config/firebase-config";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import Oauth from "../../components/Oauth";
+import Spinner from "../../components/Spinner";
 
 const SignUp = () => {
-  const [user, setUser] = useState({
-    email: "",
+  const [formData, setFormData] = useState({
     name: "",
+    email: "",
     password: "",
   });
 
+  const navigate = useNavigate();
+  const { name, email, password } = formData;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({
+    setFormData((prevUser) => ({
       ...prevUser,
       [name]: value,
     }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      <Spinner />;
+      navigate("/expense-tracker");
+    } catch (error) {
+      toast.error("You are already registered!");
+    }
   };
 
   return (
@@ -26,14 +64,17 @@ const SignUp = () => {
       <h1 className="text-center bg-slate-600 p-3 text-3xl font-semibold shadow-lg text-white">
         Track Your Daily Expense
       </h1>
-      <form className="w-[60%] sm:w-[50%] mx-auto mt-[2rem] bg-white bg-opacity-[0.4] shadow-lg rounded p-1">
+      <form
+        onSubmit={handleSubmit}
+        className="w-[60%] sm:w-[50%] mx-auto mt-[2rem] bg-white bg-opacity-[0.4] shadow-lg rounded p-1"
+      >
         <p className="mb-1 text-4xl font-semibold text-black text-center">
           Sign Up
         </p>
         <p className="mb-5 text-center">
           <span className="text-black font-lg">Already a member?</span>
           <span className="text-blue-500 hover:text-blue-700 cursor-pointer hover:font-semibold active:text-blue-800 transition duration-200 ease-in-out">
-            Sign In
+            <Link to="/sign-in">Sign In</Link>
           </span>
         </p>
         <div className="flex flex-col flex-1 mb-3">
@@ -50,7 +91,8 @@ const SignUp = () => {
             id="name"
             placeholder="Enter your name"
             onChange={handleChange}
-            value={user.name}
+            value={name}
+            required
           />
         </div>
         <div className="flex flex-col flex-1 mb-3">
@@ -67,7 +109,8 @@ const SignUp = () => {
             id="email"
             placeholder="example@gmail.com"
             onChange={handleChange}
-            value={user.email}
+            value={email}
+            required
           />
         </div>
         <div className="flex flex-col flex-1">
@@ -84,7 +127,8 @@ const SignUp = () => {
             id="password"
             placeholder="Password"
             onChange={handleChange}
-            value={user.password}
+            value={password}
+            required
           />
         </div>
         <div className="bg-blue-500 flex  p-1 justify-center items-center my-2 text-white font-bold text-xl rounded hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-900 transition duration-200 ease-in-out">
@@ -97,20 +141,7 @@ const SignUp = () => {
           <p className="text-center font-bold text-lg mx-3">or</p>
           <div className="border border-gray-700 flex-grow"></div>
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row">
-          <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaGooglePlus className="bg-white rounded-full text-pink-500 text-2xl font-bold" />
-            <button className="uppercase text-white font-semibold text-[15px]">
-              Continue with google
-            </button>
-          </div>
-          <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaFacebook className="bg-white rounded-full text-blue-500 text-2xl font-bold" />
-            <button className="uppercase text-white font-semibold text-[15px]">
-              Continue with facebook
-            </button>
-          </div>
-        </div>
+        <Oauth />
       </form>
     </section>
   );

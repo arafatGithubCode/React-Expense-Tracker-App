@@ -1,7 +1,10 @@
 import { useState } from "react";
 
-import { FaGooglePlus } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Oauth from "../../components/Oauth";
 
 const SignUp = () => {
   const [user, setUser] = useState({
@@ -9,12 +12,31 @@ const SignUp = () => {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({
       ...prevUser,
       [name]: value,
     }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        user.email,
+        user.password
+      );
+      if (userCredential.user) {
+        navigate("/expense-tracker");
+      }
+    } catch (error) {
+      toast.error("Bad use credential");
+    }
   };
 
   return (
@@ -25,14 +47,17 @@ const SignUp = () => {
       <h1 className="text-center bg-slate-600 p-3 text-3xl font-semibold shadow-lg text-white">
         Track Your Daily Expense
       </h1>
-      <form className="w-[60%] sm:w-[50%] mx-auto mt-[2rem] bg-white bg-opacity-[0.4] shadow-lg rounded p-1">
+      <form
+        onSubmit={handleSubmit}
+        className="w-[60%] sm:w-[50%] mx-auto mt-[2rem] bg-white bg-opacity-[0.4] shadow-lg rounded p-1"
+      >
         <p className="mb-1 text-4xl font-semibold text-black text-center">
           Sign In
         </p>
         <p className="mb-5 text-center">
           <span className="text-black font-lg">Do not have an account?</span>
           <span className="text-blue-500 hover:text-blue-700 cursor-pointer hover:font-semibold active:text-blue-800 transition duration-200 ease-in-out">
-            Sign Up
+            <Link to="/">Sign Up</Link>
           </span>
         </p>
         <div className="flex flex-col flex-1 mb-3">
@@ -79,20 +104,7 @@ const SignUp = () => {
           <p className="text-center font-bold text-lg mx-3">or</p>
           <div className="border border-gray-700 flex-grow"></div>
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row">
-          <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaGooglePlus className="bg-white rounded-full text-black text-2xl font-bold" />
-            <button className="uppercase text-white font-semibold text-[15px]">
-              Continue with google
-            </button>
-          </div>
-          <div className="flex justify-center items-center gap-2 bg-green-500 rounded p-1 hover:bg-green-600 focus:bg-green-700 active:bg-green-800 transition duration-200 ease-in-out flex-1">
-            <FaFacebook className="bg-white rounded-full text-black text-2xl font-bold" />
-            <button className="uppercase text-white font-semibold text-[15px]">
-              Continue with facebook
-            </button>
-          </div>
-        </div>
+        <Oauth />
       </form>
     </section>
   );
