@@ -9,6 +9,7 @@ import Error from "./pages/Error";
 import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -17,7 +18,11 @@ function App() {
         <Routes>
           <Route path="/" exact element={<SignUp />} />
           <Route path="/sign-in" exact element={<SignIn />} />
-          <Route path="/expense-tracker" exact element={<ExpenseTracker />} />
+
+          <Route path="/expense-tracker" element={<PrivateRoute />}>
+            <Route path="/expense-tracker" exact element={<ExpenseTracker />} />
+          </Route>
+
           <Route path="/forgot-password" exact element={<ForgotPassword />} />
           <Route path="*" exact element={<Error />} />
         </Routes>
