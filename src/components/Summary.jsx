@@ -2,7 +2,7 @@ import { FaBangladeshiTakaSign } from "react-icons/fa6";
 
 const Summary = () => {
   return (
-    <div className="text-white mt-[4rem] mx-auto w-[60%]">
+    <div className="text-white mt-[1rem] mx-auto w-[60%] sm:mt-[2rem]">
       <div className="flex justify-center items-center gap-3">
         <h1 className="font-bold text-xl">Transaction Summary</h1>
         <img
@@ -13,7 +13,10 @@ const Summary = () => {
       </div>
       <div className="flex justify-start items-center gap-2 mb-3">
         <h2 className="font-semibold text-lg uppercase">
-          Balance: <span className="text-2xl font-semibold">0.00</span>
+          Balance:{" "}
+          <span className="text-2xl font-semibold">
+            <span className="underline">0.00</span>
+          </span>
         </h2>
         <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
       </div>

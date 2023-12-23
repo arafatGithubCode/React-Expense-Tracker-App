@@ -22,7 +22,7 @@ const Oauth = () => {
       const authInfo = {
         name: user.displayName,
         email: user.email,
-        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
         photoURL: user.photoURL,
         isAuth: user.emailVerified,
         userId: user.uid,

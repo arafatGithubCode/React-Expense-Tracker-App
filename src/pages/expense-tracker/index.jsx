@@ -1,13 +1,15 @@
 import { useState } from "react";
 
 import { IoIosAddCircle } from "react-icons/io";
+import { FaHistory } from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 
 import TransactionModal from "../../components/TransactionModal";
 import Summary from "../../components/Summary";
-import TransactionList from "../../components/TransactionList";
 
 import { getAuth } from "firebase/auth";
+import TransactionList from "../../components/TransactionList";
 
 const ExpenseTracker = () => {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +29,7 @@ const ExpenseTracker = () => {
   };
 
   return (
-    <section className="bg-black bg-opacity-[0.8] w-screen h-screen">
+    <section className="bg-black bg-opacity-[0.8] w-screen">
       <div className="bg-slate-700 py-3 flex items-center">
         <h1 className="text-yellow-500 font-semibold text-2xl flex-1 text-center">
           {`${userName}'s Expense Tracker App`}
@@ -64,7 +66,13 @@ const ExpenseTracker = () => {
         )}
       </div>
       <Summary />
-      <TransactionList />
+      <div className="flex justify-center items-center bg-gray-400 p-1 my-4 gap-3">
+        <h1 className="text-xl italic text-orange-800">Transaction List</h1>
+        <FaHistory className="font-bold text-2xl text-blue-700" />
+      </div>
+      <div className="flex gap-2 flex-wrap justify-center items-center">
+        <TransactionList />
+      </div>
       <TransactionModal visible={showModal} onClose={handleClose} />
     </section>
   );
