@@ -16,7 +16,7 @@ const ExpenseTracker = () => {
   const auth = getAuth();
   const userName = auth.currentUser.displayName;
   const userEmail = auth.currentUser.email;
-  const profilePhoto = auth.currentUser.profilePhoto;
+  const photoURL = auth.currentUser.photoURL;
 
   const handleClose = () => setShowModal(false);
 
@@ -50,11 +50,11 @@ const ExpenseTracker = () => {
           <span>Add Transaction</span>
         </button>
 
-        {profilePhoto && (
+        {photoURL && (
           <div className="w-[10%] relative group">
             <img
               className="rounded-full w-full  border-slate-700 border"
-              src={profilePhoto}
+              src={photoURL}
               alt="Image"
             />
             <div className="opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out absolute inset-x-0 bottom-[-1] flex justify-center items-start text-[8px] font-medium text-white sm:text-sm md:text-lg">

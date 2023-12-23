@@ -19,19 +19,24 @@ const Oauth = () => {
       //check user
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
+      const authInfo = {
+        name: user.displayName,
+        email: user.email,
+        timestamp: serverTimestamp(),
+        photoURL: user.photoURL,
+        isAuth: user.emailVerified,
+        userId: user.uid,
+      };
       if (!docSnap.exists()) {
-        await setDoc(docRef, {
-          name: user.displayName,
-          email: user.email,
-          timestamp: serverTimestamp(),
-        });
+        await setDoc(docRef, authInfo);
       }
+      localStorage.setItem("auth", JSON.stringify(authInfo));
+      console.log(result);
       navigate("/expense-tracker");
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <>
       <div className="flex flex-col gap-2 lg:flex-row">

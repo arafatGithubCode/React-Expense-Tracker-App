@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,7 +11,6 @@ import {
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import Oauth from "../../components/Oauth";
-import Spinner from "../../components/Spinner";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +47,7 @@ const SignUp = () => {
       delete formDataCopy.password;
       formDataCopy.timestamp = serverTimestamp();
       await setDoc(doc(db, "users", user.uid), formDataCopy);
-      <Spinner />;
+      console.log(user);
       navigate("/expense-tracker");
     } catch (error) {
       toast.error("You are already registered!");
