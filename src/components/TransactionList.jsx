@@ -5,13 +5,38 @@ import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { format, formatDistanceToNow } from "date-fns";
 
+import EditTransaction from "./EditTransaction";
+import { useState } from "react";
+
 const TransactionList = () => {
-  const { transactions } = useGetTransaction();
-  console.log(transactions);
+  const [showModal, setShowModal] = useState(false);
+  const [EditTransactionId, setEditTransactionId] = useState(null);
+
+  const { transactions, setTransactions, deleteTransaction } =
+    useGetTransaction();
+
+  const handleDelete = async (id) => {
+    await deleteTransaction(id);
+    const filterTransactions = transactions.filter(
+      (transaction) => transaction.id !== id
+    );
+
+    setTransactions(filterTransactions);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setEditTransactionId(null);
+  };
+
+  const handleUpdate = (id) => {
+    setEditTransactionId(id);
+    setShowModal(true);
+  };
 
   return (
     <>
-      {transactions &&
+      {Array.isArray(transactions) &&
         transactions.map((transaction) => {
           const { desc, amount, transactionType, id, createdAt } = transaction;
 
@@ -58,13 +83,24 @@ const TransactionList = () => {
               </div>
               <div className="flex justify-between items-center mt-2">
                 <div className="relative group">
-                  <FaEdit className="text-xl text-black cursor-pointer" />
+                  <FaEdit
+                    onClick={() => handleUpdate(id)}
+                    className="text-xl text-black cursor-pointer"
+                  />
                   <div className="absolute inset-y-0 left-8 flex justify-center items-end opacity-0 group-hover:opacity-100 transition duration-150 ease-in-out text-md sm:text-lg text-green-800 font-semibold">
                     Edit
                   </div>
+                  <EditTransaction
+                    onId={EditTransactionId}
+                    visible={showModal}
+                    onClose={handleClose}
+                  />
                 </div>
                 <div className="relative group">
-                  <MdDelete className="text-xl text-red-400 hover:text-red-500 cursor-pointer" />
+                  <MdDelete
+                    onClick={() => handleDelete(id)}
+                    className="text-xl text-red-400 hover:text-red-500 cursor-pointer"
+                  />
                   <div className="absolute inset-y-0 right-8 flex justify-center items-end opacity-0 group-hover:opacity-100 transition duration-150 ease-in-out text-md sm:text-lg text-red-800 font-semibold">
                     Delete
                   </div>

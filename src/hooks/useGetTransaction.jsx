@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import {
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
@@ -10,6 +12,8 @@ import {
 import { db } from "../config/firebase-config";
 
 import { useGetUserInfo } from "./useGetUserInfo";
+
+import { toast } from "react-toastify";
 
 export const useGetTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -41,8 +45,19 @@ export const useGetTransaction = () => {
     }
     return () => unsubscribe();
   };
+
+  const deleteTransaction = async (id) => {
+    try {
+      await deleteDoc(doc(transactionCollectionRef, id));
+      toast.success("Clicked transaction deleted");
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not delete");
+    }
+  };
+
   useEffect(() => {
     getTransactions();
   }, []);
-  return { transactions };
+  return { transactions, setTransactions, deleteTransaction };
 };

@@ -29,7 +29,7 @@ const ExpenseTracker = () => {
   };
 
   return (
-    <section className="bg-black bg-opacity-[0.8] w-screen">
+    <section className="bg-black bg-opacity-[0.8] w-screen min-h-screen">
       <div className="bg-slate-700 py-3 flex items-center">
         <h1 className="text-yellow-500 font-semibold text-2xl flex-1 text-center">
           {`${userName}'s Expense Tracker App`}

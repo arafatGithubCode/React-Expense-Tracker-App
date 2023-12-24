@@ -1,13 +1,26 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
-
-import { useAddTransaction } from "../hooks/useAddTransaction";
+import { useEffect, useState } from "react";
 
 import Spinner from "./Spinner";
-import { toast } from "react-toastify";
 
-const TransactionModal = ({ visible, onClose }) => {
-  const { addTransaction } = useAddTransaction();
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+import { useGetTransaction } from "../hooks/useGetTransaction";
+import { useGetUserInfo } from "../hooks/useGetUserInfo";
+
+import { getAuth } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase-config";
+
+const TransactionModal = ({ visible, onClose, onId }) => {
+  const [loading, setLoading] = useState(false);
+
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const { userId } = useGetUserInfo();
+
+  const { setTransactions } = useGetTransaction();
 
   const [transactionData, setTransactionData] = useState({
     desc: "",
@@ -15,7 +28,32 @@ const TransactionModal = ({ visible, onClose }) => {
     transactionType: "expense",
   });
 
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (onId && userId !== auth.currentUser.uid) {
+      toast.error("You cannot edit!");
+      navigate("/");
+    }
+  }, [auth.currentUser.uid, navigate, userId, onId]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    const fetchTransaction = async () => {
+      const docRef = doc(db, "transactions", onId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setTransactions(docSnap.data());
+        setTransactionData({ ...docSnap.data() });
+        setLoading(false);
+      } else {
+        navigate("/");
+        toast.error("This transaction does not exist!");
+      }
+    };
+
+    fetchTransaction();
+  }, [navigate, onId, setTransactions]);
 
   if (!visible) return null;
 
@@ -33,15 +71,12 @@ const TransactionModal = ({ visible, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
     try {
-      addTransaction({
-        amount,
-        desc,
-        transactionType,
-      });
+      const docRef = doc(db, "transactions", onId);
+      await updateDoc(docRef, transactionData);
       setLoading(false);
       {
         loading && <Spinner />;
@@ -159,6 +194,7 @@ const TransactionModal = ({ visible, onClose }) => {
 TransactionModal.propTypes = {
   visible: PropTypes.bool,
   onClose: PropTypes.any,
+  onId: PropTypes.string,
 };
 
 export default TransactionModal;
