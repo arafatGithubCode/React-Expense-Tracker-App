@@ -1,8 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-import Spinner from "./Spinner";
-
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -13,9 +11,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase-config";
 
-const TransactionModal = ({ visible, onClose, onId }) => {
-  const [loading, setLoading] = useState(false);
-
+const EditTransaction = ({ visible, onClose, onId }) => {
   const auth = getAuth();
   const navigate = useNavigate();
   const { userId } = useGetUserInfo();
@@ -24,7 +20,7 @@ const TransactionModal = ({ visible, onClose, onId }) => {
 
   const [transactionData, setTransactionData] = useState({
     desc: "",
-    amount: 0,
+    amount: "",
     transactionType: "expense",
   });
 
@@ -36,16 +32,13 @@ const TransactionModal = ({ visible, onClose, onId }) => {
   }, [auth.currentUser.uid, navigate, userId, onId]);
 
   useEffect(() => {
-    setLoading(true);
-
     const fetchTransaction = async () => {
-      const docRef = doc(db, "transactions", onId);
+      const docRef = onId && doc(db, "transactions", onId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         setTransactions(docSnap.data());
         setTransactionData({ ...docSnap.data() });
-        setLoading(false);
       } else {
         navigate("/");
         toast.error("This transaction does not exist!");
@@ -72,15 +65,10 @@ const TransactionModal = ({ visible, onClose, onId }) => {
   };
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
     try {
-      const docRef = doc(db, "transactions", onId);
+      const docRef = onId && doc(db, "transactions", onId);
       await updateDoc(docRef, transactionData);
-      setLoading(false);
-      {
-        loading && <Spinner />;
-      }
       setTransactionData({
         desc: "",
         amount: "",
@@ -141,7 +129,7 @@ const TransactionModal = ({ visible, onClose, onId }) => {
             id="amount"
             placeholder="1000 tk"
             required
-            min={0}
+            min={1}
           />
         </div>
         <div className="flex justify-between items-center">
@@ -191,10 +179,10 @@ const TransactionModal = ({ visible, onClose, onId }) => {
   );
 };
 
-TransactionModal.propTypes = {
+EditTransaction.propTypes = {
   visible: PropTypes.bool,
   onClose: PropTypes.any,
-  onId: PropTypes.string,
+  onId: PropTypes.any,
 };
 
-export default TransactionModal;
+export default EditTransaction;

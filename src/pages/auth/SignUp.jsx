@@ -48,6 +48,17 @@ const SignUp = () => {
       formDataCopy.timestamp = serverTimestamp();
       await setDoc(doc(db, "users", user.uid), formDataCopy);
       console.log(user);
+
+      const authInfo = {
+        name: user.displayName,
+        email: user.email,
+        createdAt: serverTimestamp(),
+        photoURL: user.photoURL,
+        isAuth: user.emailVerified,
+        userId: user.uid,
+      };
+
+      localStorage.setItem("auth", JSON.stringify(authInfo));
       navigate("/expense-tracker");
     } catch (error) {
       toast.error("You are already registered!");

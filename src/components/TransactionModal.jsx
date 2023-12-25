@@ -11,7 +11,7 @@ const TransactionModal = ({ visible, onClose }) => {
 
   const [transactionData, setTransactionData] = useState({
     desc: "",
-    amount: 0,
+    amount: "",
     transactionType: "expense",
   });
 
@@ -106,7 +106,7 @@ const TransactionModal = ({ visible, onClose }) => {
             id="amount"
             placeholder="1000 tk"
             required
-            min={0}
+            min={1}
           />
         </div>
         <div className="flex justify-between items-center">
