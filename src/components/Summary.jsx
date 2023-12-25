@@ -6,6 +6,11 @@ const Summary = () => {
   const { totalTransaction } = useGetTransaction();
   const { balance, income, expense } = totalTransaction;
 
+  // formatted amount
+  const formattedBalance = balance.toLocaleString("en-US");
+  const formattedIncome = income.toLocaleString("en-US");
+  const formattedExpense = expense.toLocaleString("en-US");
+
   return (
     <div className="text-white mt-[1rem] mx-auto w-[60%] sm:mt-[2rem]">
       <div className="flex justify-center items-center gap-3">
@@ -21,7 +26,7 @@ const Summary = () => {
           Balance:{" "}
           <span className="text-2xl font-semibold">
             <span className="underline decoration-double underline-offset-8 decoration-1">
-              {balance}
+              {formattedBalance}
             </span>
           </span>
         </h2>
@@ -34,7 +39,7 @@ const Summary = () => {
         <div className="flex justify-start items-center gap-2">
           <h2>
             <span className="text-sm">Total Income: </span>
-            <span className="text-2xl font-semibold">{income}</span>
+            <span className="text-2xl font-semibold">{formattedIncome}</span>
           </h2>
           <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
         </div>
@@ -46,7 +51,7 @@ const Summary = () => {
         <div className="flex justify-start items-center gap-2">
           <h2>
             <span className="text-sm">Total Expense: </span>
-            <span className="text-2xl font-semibold">{expense}</span>
+            <span className="text-2xl font-semibold">{formattedExpense}</span>
           </h2>
           <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
         </div>
