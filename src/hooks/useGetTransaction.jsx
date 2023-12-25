@@ -17,6 +17,11 @@ import { toast } from "react-toastify";
 
 export const useGetTransaction = () => {
   const [transactions, setTransactions] = useState([]);
+  const [totalTransaction, setTotalTransaction] = useState({
+    balance: 0.0,
+    income: 0.0,
+    expense: 0.0,
+  });
 
   const { userId } = useGetUserInfo();
   const transactionCollectionRef = collection(db, "transactions");
@@ -32,13 +37,29 @@ export const useGetTransaction = () => {
 
       unsubscribe = onSnapshot(transactionQuery, (snapshot) => {
         const docs = [];
+        let totalIncome = 0;
+        let totalExpense = 0;
+
         snapshot.forEach((doc) => {
           const data = doc.data();
           const id = doc.id;
 
           docs.push({ ...data, id });
+
+          if (data.transactionType === "expense") {
+            totalExpense += Number(data.amount);
+          } else {
+            totalIncome += Number(data.amount);
+          }
         });
         setTransactions(docs);
+
+        let balance = totalIncome - totalExpense;
+        setTotalTransaction({
+          balance,
+          income: totalIncome,
+          expense: totalExpense,
+        });
       });
     } catch (error) {
       console.error(error);
@@ -59,5 +80,5 @@ export const useGetTransaction = () => {
   useEffect(() => {
     getTransactions();
   }, []);
-  return { transactions, setTransactions, deleteTransaction };
+  return { transactions, setTransactions, deleteTransaction, totalTransaction };
 };

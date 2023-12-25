@@ -1,6 +1,11 @@
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 
+import { useGetTransaction } from "../hooks/useGetTransaction";
+
 const Summary = () => {
+  const { totalTransaction } = useGetTransaction();
+  const { balance, income, expense } = totalTransaction;
+
   return (
     <div className="text-white mt-[1rem] mx-auto w-[60%] sm:mt-[2rem]">
       <div className="flex justify-center items-center gap-3">
@@ -15,7 +20,9 @@ const Summary = () => {
         <h2 className="font-semibold text-lg uppercase">
           Balance:{" "}
           <span className="text-2xl font-semibold">
-            <span className="underline">0.00</span>
+            <span className="underline decoration-double underline-offset-8 decoration-1">
+              {balance}
+            </span>
           </span>
         </h2>
         <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
@@ -27,7 +34,7 @@ const Summary = () => {
         <div className="flex justify-start items-center gap-2">
           <h2>
             <span className="text-sm">Total Income: </span>
-            <span className="text-2xl font-semibold">0.00</span>
+            <span className="text-2xl font-semibold">{income}</span>
           </h2>
           <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
         </div>
@@ -39,7 +46,7 @@ const Summary = () => {
         <div className="flex justify-start items-center gap-2">
           <h2>
             <span className="text-sm">Total Expense: </span>
-            <span className="text-2xl font-semibold">0.00</span>
+            <span className="text-2xl font-semibold">{expense}</span>
           </h2>
           <FaBangladeshiTakaSign className="text-yellow-500 font-bold text-2xl" />
         </div>
